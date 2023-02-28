@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "paths": {
+      "stream": ["./node_modules/readable-stream"]
+    },
     "target": "es5",
     "lib": [
       "dom",

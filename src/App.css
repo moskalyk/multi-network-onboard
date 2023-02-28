@@ -36,3 +36,49 @@
     transform: rotate(360deg);
   }
 }
+
+.css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root.Mui-active {
+  color: #3de8f3 !important;
+}
+.connect-button{
+  background: linear-gradient(10.93deg,#951990 -19.03%,#3a35b1 46.85%,#20a8b0) padding-box,linear-gradient(12.93deg,#dd14d5,#4e47f5 55%,#3de8f3) border-box;
+  border: 1.5px solid transparent;
+  border-radius: 0.5rem;
+  font-family: Euclid Circular B Medium,sans-serif;
+  font-size: 14px;
+  line-height: 18px;
+  padding: 0.375rem 0.75rem;
+  color: white;
+}
+
+.css-1u4zpwo-MuiSvgIcon-root-MuiStepIcon-root.Mui-completed {
+  color:#4e47f5 !important;
+}
+
+.css-1hv8oq8-MuiStepLabel-label.Mui-active{
+  color: white !important;
+}
+
+.css-1vyamtt-MuiStepLabel-labelContainer {
+  color: grey !important;
+}
+
+.address {
+  color: white;
+}
+
+.logout {
+  color: white;
+}
+
+.css-117w1su-MuiStepIcon-text{
+  fill: white !important;
+}
+.css-1hv8oq8-MuiStepLabel-label.Mui-completed {
+  color: grey !important;
+}
+
+.css-m5vj9m-MuiStepper-root{
+  width: 600px;
+  margin: auto;
+}
