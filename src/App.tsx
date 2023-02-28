@@ -36,34 +36,34 @@ function SequenceLogin(props: any) {
     const wallet = sequence.getWallet()
 
     const connectWallet = await wallet.connect({
-      app: 'drop',
+      app: 'onboard',
+      networkId: props.network == 'polygon' ? 137 : 80001,
       authorize: true,
       settings: {
-        theme: 'light'
+        theme: 'dark'
       },
       askForEmail: true
     })
 
+    console.log('chainId:', await wallet.getChainId())
+
     if(props.network == 'polygon' && count == 1){
       
       doc.mainnetAddress = connectWallet?.session?.accountAddress
-
+      console.log('chainId:', await wallet.getChainId())
     } else if(count > 1){
       const nonce = 0
       const args = [props.genesisAccountAddress, doc.mainnetAddress, connectWallet?.session?.accountAddress, nonce]
       console.log(args)
+      console.log('chainId:', await wallet.getChainId())
       console.log([ethers.utils.solidityKeccak256(["address", "address", "address", "uint"], args), connectWallet?.email])
     }
+    props.handleNext()
   }
 
   return(<>
-      {
-        countDOM == 1 ? 
-        <p className='logout'>make sure to log out after this step is complete</p> : null
-      }
       <br/>
       <button className="connect-button" onClick={connectTestNet}>connect</button>
-  
   </>)
 }
 function Genesis(props: any) {
@@ -76,6 +76,7 @@ function Genesis(props: any) {
           onClick={async () => {
             await props.connect({ connector })
             console.log(props.genesisAccountAddress)
+            props.handleNext()
           }}
         >
           {connector.name}
@@ -93,17 +94,17 @@ function HorizontalLinearStepper(props: any) {
   const [skipped, setSkipped] = React.useState(new Set<number>());
   const [panel, setPanel] = React.useState(null)
 
-  const Compass = (activeStep: any, connectors: any, connect: any, address: any) => {
+  const Compass = (activeStep: any, connectors: any, connect: any, address: any, handleNext: any) => {
     let navigator;
       switch(activeStep){
         case 0:
-          navigator = <Genesis genesisAccountAddress={props.address} connectors={connectors} connect={connect}/>
+          navigator = <Genesis genesisAccountAddress={props.address} connectors={connectors} connect={connect} handleNext={handleNext}/>
           break;
         case 1:
-          navigator = <SequenceLogin network={'polygon'}/>
+          navigator = <SequenceLogin network={'polygon'} handleNext={handleNext}/>
           break;
         default:
-          navigator = <SequenceLogin genesisAccountAddress={props.address} network={'bsc-testnet'}/>
+          navigator = <SequenceLogin genesisAccountAddress={props.address} network={'mumbai'} handleNext={handleNext}/>
       }
     return(
       <>
@@ -157,6 +158,8 @@ function HorizontalLinearStepper(props: any) {
 
   const handleReset = () => {
     setActiveStep(0);
+    count = 0;
+    props.disconnect()
   };
 
   return (
@@ -184,9 +187,7 @@ function HorizontalLinearStepper(props: any) {
       </Stepper>
       {activeStep === steps.length ? (
         <React.Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>
-            All steps completed - you&apos;re finished
-          </Typography>
+            <p className="completion">All steps completed - you&apos;re finished</p>
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Box sx={{ flex: '1 1 auto' }} />
             <Button onClick={handleReset}>Reset</Button>
@@ -194,7 +195,7 @@ function HorizontalLinearStepper(props: any) {
         </React.Fragment>
       ) : (
         <React.Fragment>
-          {Compass(activeStep, props.connectors, props.connect, props.address)}
+          {Compass(activeStep, props.connectors, props.connect, props.address, handleNext)}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               color="inherit"
@@ -210,9 +211,10 @@ function HorizontalLinearStepper(props: any) {
                 Skip
               </Button>
             )}
-            <Button onClick={handleNext}>
-              {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-            </Button>
+            {activeStep === steps.length - 1 ? <Button onClick={handleNext}>
+              {'Finish'}
+            </Button> : null}
+            
           </Box>
         </React.Fragment>
       )}
@@ -245,8 +247,9 @@ function App() {
       <br/>
       <br/>
       <br/>
-      <div><p className="address">{address}</p>
-      <HorizontalLinearStepper connectors={connectors} connect={connect} address={address}/>
+      <div>
+      <p className="address">{address ? address?.slice(0,20)+"...": null}</p>
+      <HorizontalLinearStepper connectors={connectors} connect={connect} disconnect={disconnect} address={address}/>
     </div>
     </div>
   );
