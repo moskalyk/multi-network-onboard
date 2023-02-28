@@ -40,7 +40,7 @@ contract Claimable is Ownable {
   
   mapping(address => uint) public nonces_;
 
-  function claim(address _genesisEOA, address , bytes _sig, address _contractAddress) public returns(bool) {
+  function claim(address _genesisEOA, address _mainnetSequenceAddress, bytes _sig, address _contractAddress) public returns(bool) {
     
     // Recreate the message, which also confirms the msg.sender matches the arguments in the signature
     bytes32 message = keccak256(abi.encodePacked(msg.sender, _genesisEOA, _mainnetSequenceAddress, nonces_[msg.sender]++, _contractAddress));
